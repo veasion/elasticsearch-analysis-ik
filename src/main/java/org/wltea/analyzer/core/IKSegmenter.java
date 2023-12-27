@@ -82,6 +82,10 @@ public final class IKSegmenter {
 		segmenters.add(new CN_QuantifierSegmenter());
 		//处理中文词的子分词器
 		segmenters.add(new CJKSegmenter());
+		if (configuration.isUseName()) {
+			//处理姓名的子分词器
+			segmenters.add(new NameSegmenter());
+		}
 		return segmenters;
 	}
 	

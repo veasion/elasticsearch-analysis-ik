@@ -3,9 +3,11 @@ IK Analysis for Elasticsearch
 
 The IK Analysis plugin integrates Lucene IK analyzer (http://code.google.com/p/ik-analyzer/) into elasticsearch, support customized dictionary.
 
-Analyzer: `ik_smart` , `ik_max_word` , Tokenizer: `ik_smart` , `ik_max_word`
+Analyzer: `ik_smart` , `ik_max_word` , `ik_smart_name` , `ik_max_word_name` , Tokenizer: `ik_smart` , `ik_max_word` , `ik_smart_name` , `ik_max_word_name`
 
 > If some version was not released in time, instead of request version by raising issue, please kindly reach out by join this discord channel( [https://discord.gg/NtZgghfW](https://discord.gg/NtZgghfW)).
+
+扩展 IK 分词器，新增 _name 后缀分词器，带 _name 后会额外支持通用姓名分词。
 
 Install
 -------
@@ -217,7 +219,7 @@ mvn package
 ```bash
 curl -XGET "http://localhost:9200/your_index/_analyze" -H 'Content-Type: application/json' -d'
 {
-   "text":"中华人民共和国MN","tokenizer": "my_ik"
+   "text":"中华人民共和国MN","tokenizer": "ik_smart"
 }'
 ```
 
@@ -229,11 +231,7 @@ ik_max_word: 会将文本做最细粒度的拆分，比如会将“中华人民�
 
 ik_smart: 会做最粗粒度的拆分，比如会将“中华人民共和国国歌”拆分为“中华人民共和国,国歌”，适合 Phrase 查询。
 
-Changes
-------
-*自 v5.0.0 起*
-
-- 移除名为 `ik` 的analyzer和tokenizer,请分别使用 `ik_smart` 和 `ik_max_word`
+ik_max_word_name 和 ik_smart_name 是基于上面分词器进行扩展，额外支持通用中文姓名分词（无配置字典情况下可支持通用人名分词）
 
 # Community
 

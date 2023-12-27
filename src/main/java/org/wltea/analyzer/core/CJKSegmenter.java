@@ -71,7 +71,7 @@ class CJKSegmenter implements ISegmenter {
 					}else if(hit.isUnmatch()){
 						//hit不是词，移除
 						this.tmpHits.remove(hit);
-					}					
+					}
 				}
 			}			
 			

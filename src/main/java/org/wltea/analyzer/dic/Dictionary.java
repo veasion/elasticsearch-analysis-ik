@@ -1,31 +1,7 @@
-/**
- * IK 中文分词  版本 5.0
- * IK Analyzer release 5.0
- *
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * 源代码由林良益(linliangyi2005@gmail.com)提供
- * 版权声明 2012，乌龙茶工作室
- * provided by Linliangyi and copyright 2012 by Oolong studio
- *
- *
- */
 package org.wltea.analyzer.dic;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -45,7 +21,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -64,6 +39,8 @@ import org.wltea.analyzer.help.ESPluginLoggerFactory;
  */
 public class Dictionary {
 
+	public static String TEST_DIR_PATH;
+
 	/*
 	 * 词典单子实例
 	 */
@@ -72,6 +49,8 @@ public class Dictionary {
 	private DictSegment _MainDict;
 
 	private DictSegment _QuantifierDict;
+
+	private DictSegment _SurnameDict;
 
 	private DictSegment _StopWords;
 
@@ -103,7 +82,11 @@ public class Dictionary {
 	private Dictionary(Configuration cfg) {
 		this.configuration = cfg;
 		this.props = new Properties();
-		this.conf_dir = cfg.getEnvironment().configFile().resolve(AnalysisIkPlugin.PLUGIN_NAME);
+		if (TEST_DIR_PATH != null) {
+			this.conf_dir = new File(TEST_DIR_PATH).toPath();
+		} else {
+			this.conf_dir = cfg.getEnvironment().configFile().resolve(AnalysisIkPlugin.PLUGIN_NAME);
+		}
 		Path configFile = conf_dir.resolve(FILE_NAME);
 
 		InputStream input = null;
@@ -359,6 +342,15 @@ public class Dictionary {
 	}
 
 	/**
+	 * 检索匹配姓氏词典
+	 *
+	 * @return Hit 匹配结果描述
+	 */
+	public Hit matchInSurnameDict(char[] charArray, int begin, int length) {
+		return singleton._SurnameDict.match(charArray, begin, length);
+	}
+
+	/**
 	 * 从已匹配的Hit中直接取出DictSegment，继续向下匹配
 	 * 
 	 * @return Hit
@@ -543,8 +535,11 @@ public class Dictionary {
 		loadDictFile(_QuantifierDict, file, false, "Quantifier");
 	}
 
+	/**
+	 * 加载姓氏词典
+	 */
 	private void loadSurnameDict() {
-		DictSegment _SurnameDict = new DictSegment((char) 0);
+		_SurnameDict = new DictSegment((char) 0);
 		Path file = PathUtils.get(getDictRoot(), Dictionary.PATH_DIC_SURNAME);
 		loadDictFile(_SurnameDict, file, true, "Surname");
 	}
