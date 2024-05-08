@@ -5,7 +5,6 @@ The IK Analysis plugin integrates Lucene IK analyzer (http://code.google.com/p/i
 
 Analyzer: `ik_smart` , `ik_max_word` , `ik_smart_name` , `ik_max_word_name` , Tokenizer: `ik_smart` , `ik_max_word` , `ik_smart_name` , `ik_max_word_name`
 
-> If some version was not released in time, instead of request version by raising issue, please kindly reach out by join this discord channel( [https://discord.gg/NtZgghfW](https://discord.gg/NtZgghfW)).
 
 扩展 IK 分词器，新增 _name 后缀分词器，带 _name 后会额外支持通用姓名分词。
 
@@ -14,19 +13,19 @@ Install
 
 1.download or compile
 
-* optional 1 - download pre-build package from here: https://github.com/medcl/elasticsearch-analysis-ik/releases
+* optional 1 - download pre-build package from here: [https://github.com/medcl/elasticsearch-analysis-ik/releases](https://github.com/veasion/elasticsearch-analysis-ik/releases)
 
-    create plugin folder `cd your-es-root/plugins/ && mkdir ik`
+    create plugin folder `cd your-es-root/plugins/`
     
     unzip plugin to folder `your-es-root/plugins/ik`
 
 * optional 2 - use elasticsearch-plugin to install ( supported from version v5.5.1 ):
 
     ```
-    ./bin/elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v6.3.0/elasticsearch-analysis-ik-6.3.0.zip
+    ./bin/elasticsearch-plugin install https://github.com/veasion/elasticsearch-analysis-ik/releases/download/v8.11.3/elasticsearch-analysis-ik.zip
     ```
 
-   NOTE: replace `6.3.0` to your own elasticsearch version
+   NOTE: replace `8.11.3` to your own elasticsearch version
 
 2.restart elasticsearch
 
@@ -48,8 +47,8 @@ curl -XPOST http://localhost:9200/index/_mapping -H 'Content-Type:application/js
         "properties": {
             "content": {
                 "type": "text",
-                "analyzer": "ik_max_word",
-                "search_analyzer": "ik_smart"
+                "analyzer": "ik_max_word_name",
+                "search_analyzer": "ik_smart_name"
             }
         }
 
@@ -202,7 +201,8 @@ have fun.
 
 
 ```bash
-git clone https://github.com/medcl/elasticsearch-analysis-ik
+# jdk17
+git clone https://github.com/veasion/elasticsearch-analysis-ik
 cd elasticsearch-analysis-ik
 git checkout tags/{version}
 mvn clean
@@ -219,12 +219,12 @@ mvn package
 ```bash
 curl -XGET "http://localhost:9200/your_index/_analyze" -H 'Content-Type: application/json' -d'
 {
-   "text":"中华人民共和国MN","tokenizer": "ik_smart"
+   "text":"中华人民共和国MN","tokenizer": "ik_smart_name"
 }'
 ```
 
 
-4. ik_max_word 和 ik_smart 什么区别?
+4. ik_max_word、ik_smart 和 ik_max_word_name、ik_smart_name 什么区别?
 
 
 ik_max_word: 会将文本做最细粒度的拆分，比如会将“中华人民共和国国歌”拆分为“中华人民共和国,中华人民,中华,华人,人民共和国,人民,人,民,共和国,共和,和,国国,国歌”，会穷尽各种可能的组合，适合 Term Query；
@@ -232,7 +232,3 @@ ik_max_word: 会将文本做最细粒度的拆分，比如会将“中华人民�
 ik_smart: 会做最粗粒度的拆分，比如会将“中华人民共和国国歌”拆分为“中华人民共和国,国歌”，适合 Phrase 查询。
 
 ik_max_word_name 和 ik_smart_name 是基于上面分词器进行扩展，额外支持通用中文姓名分词（无配置字典情况下可支持通用人名分词）
-
-# Community
-
-[https://discord.gg/NtZgghfW](https://discord.gg/NtZgghfW)
